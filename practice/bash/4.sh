@@ -1,5 +1,4 @@
 #!/bin/bash
-
 case "$1" in
     "Mercury") echo "0" ;;
     "Venus") echo "0" ;;
