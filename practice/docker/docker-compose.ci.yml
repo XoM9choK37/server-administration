@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  postgres_test:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: kubsu
+      POSTGRES_PASSWORD: kubsu
+      POSTGRES_DB: kubsu
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kubsu"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  test_runner:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    environment:
+      DATABASE_URL: postgresql+psycopg://kubsu:kubsu@postgres_test:5432/kubsu
+    depends_on:
+      postgres_test:
+        condition: service_healthy
+    command: pytest tests/ -v --asyncio-mode=auto
